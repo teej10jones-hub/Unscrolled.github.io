@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Unscrolled</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Crimson+Pro:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ── Reset & Base ─────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg1: #FAFAF6;
+      --bg2: #F0F0EB;
+      --text: #333333;
+      --text-muted: #666666;
+      --border: #333333;
+      --btn-bg: #333333;
+      --btn-text: #FAFAF6;
+      --accent: #555555;
+      --card-bg: rgba(255,255,255,0.45);
+      --shadow: rgba(0,0,0,0.10);
+    }
+
+    /* ── Themes ───────────────────────────────────────── */
+    [data-theme="dark"] {
+      --bg1: #1A1A1A; --bg2: #121212;
+      --text: #F5F5F5; --text-muted: #AAAAAA;
+      --border: #F5F5F5; --btn-bg: #F5F5F5; --btn-text: #1A1A1A;
+      --accent: #CCCCCC; --card-bg: rgba(255,255,255,0.07); --shadow: rgba(0,0,0,0.40);
+    }
+    [data-theme="blue"] {
+      --bg1: #BBDEFB; --bg2: #90CAF9;
+      --text: #01265F; --text-muted: #1A4A8A;
+      --border: #0D47A1; --btn-bg: #01265F; --btn-text: #E3F2FD;
+      --accent: #0D47A1; --card-bg: rgba(255,255,255,0.35); --shadow: rgba(1,38,95,0.15);
+    }
+    [data-theme="red"] {
+      --bg1: #FFCDD2; --bg2: #EF9A9A;
+      --text: #650D0D; --text-muted: #8B2020;
+      --border: #B71C1C; --btn-bg: #650D0D; --btn-text: #F6D7DB;
+      --accent: #B71C1C; --card-bg: rgba(255,255,255,0.35); --shadow: rgba(101,13,13,0.15);
+    }
+    [data-theme="green"] {
+      --bg1: #C8E6C9; --bg2: #A5D6A7;
+      --text: #1B5E20; --text-muted: #2E7D32;
+      --border: #1B5E20; --btn-bg: #164F1A; --btn-text: #E8F5E9;
+      --accent: #2E7D32; --card-bg: rgba(255,255,255,0.35); --shadow: rgba(27,94,32,0.15);
+    }
+    [data-theme="purple"] {
+      --bg1: #E1BEE7; --bg2: #CE93D8;
+      --text: #240E3F; --text-muted: #4A1876;
+      --border: #4A148C; --btn-bg: #240E3F; --btn-text: #F3E5F5;
+      --accent: #4A148C; --card-bg: rgba(255,255,255,0.35); --shadow: rgba(36,14,63,0.15);
+    }
+
+    body {
+      font-family: 'Crimson Pro', Georgia, serif;
+      background: linear-gradient(to bottom, var(--bg1), var(--bg2));
+      min-height: 100vh;
+      min-height: 100dvh;
+      color: var(--text);
+      transition: background 0.4s, color 0.4s;
+      overflow-x: hidden;
+    }
+
+    /* ── Border frame ─────────────────────────────────── */
+    #frame {
+      min-height: 100vh;
+      min-height: 100dvh;
+      border: 10px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      padding: env(safe-area-inset-top, 16px) env(safe-area-inset-right, 16px) env(safe-area-inset-bottom, 16px) env(safe-area-inset-left, 16px);
+      transition: border-color 0.4s;
+    }
+
+    /* ── Pages ────────────────────────────────────────── */
+    .page { display: none; flex-direction: column; flex: 1; }
+    .page.active { display: flex; }
+
+    /* ══════════════════════════════════════════════════
+       MAIN PAGE
+    ══════════════════════════════════════════════════ */
+    #main-page {
+      justify-content: space-between;
+      align-items: center;
+      padding: 24px 20px 16px;
+      gap: 16px;
+    }
+
+    /* App title */
+    #app-title {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: clamp(1.4rem, 5vw, 1.9rem);
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text);
+      opacity: 0.85;
+      text-align: center;
+      animation: fadeDown 0.7s ease both;
+    }
+
+    /* Quote card */
+    #quote-card {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 32px 20px;
+      animation: fadeUp 0.8s ease 0.1s both;
+    }
+
+    #quote-text {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: clamp(1.2rem, 4.5vw, 1.7rem);
+      font-weight: 400;
+      line-height: 1.65;
+      color: var(--text);
+      max-width: 540px;
+    }
+
+    #quote-ref {
+      margin-top: 14px;
+      font-size: clamp(0.85rem, 2.8vw, 1rem);
+      font-style: italic;
+      color: var(--text-muted);
+      transition: opacity 0.3s;
+    }
+
+    #quote-source-label {
+      margin-top: 6px;
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      opacity: 0.7;
+    }
+
+    /* ── Setup Prompt ─────────────────────────────────── */
+    #setup-prompt {
+      flex: 1;
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 8px 4px 0;
+      width: 100%;
+      animation: fadeUp 0.7s ease 0.1s both;
+    }
+
+    .setup-card {
+      background: var(--card-bg);
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      padding: 20px 18px;
+      width: 100%;
+      max-width: 480px;
+    }
+
+    /* Step wrapper — collapses when done */
+    .setup-step-block {
+      overflow: hidden;
+      transition: max-height 0.45s ease, opacity 0.35s ease, margin 0.35s ease;
+      max-height: 500px;
+      opacity: 1;
+    }
+    .setup-step-block.collapsed {
+      max-height: 0;
+      opacity: 0;
+      margin: 0 !important;
+    }
+
+    /* Completed step badge */
+    .step-done-badge {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      padding: 2px 0 14px;
+    }
+    .step-done-badge.visible { display: flex; }
+    .step-done-badge .check-circle {
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      background: var(--btn-bg);
+      color: var(--btn-text);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.7rem;
+      flex-shrink: 0;
+    }
+
+    .setup-step-label {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .step-number {
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      background: var(--btn-bg);
+      color: var(--btn-text);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem;
+      flex-shrink: 0;
+    }
+
+    .setup-step-desc {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin-bottom: 12px;
+      padding-left: 30px;
+    }
+
+    .setup-substeps {
+      list-style: none;
+      padding-left: 30px;
+      margin-bottom: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .setup-substeps li {
+      font-size: 0.83rem;
+      color: var(--text-muted);
+      line-height: 1.45;
+      padding-left: 14px;
+      position: relative;
+    }
+    .setup-substeps li::before {
+      content: '·';
+      position: absolute;
+      left: 2px;
+      font-size: 1rem;
+      line-height: 1.3;
+    }
+
+    .step-divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      opacity: 0.2;
+      margin: 16px 0;
+    }
+
+    /* Step 2 dimmed until step 1 done */
+    .setup-step-block.dimmed {
+      opacity: 0.45;
+      pointer-events: none;
+    }
+
+    /* Reset link */
+    #reset-setup-link {
+      display: none;
+      background: none;
+      border: none;
+      font-family: 'Crimson Pro', serif;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      padding: 0;
+      margin-top: 12px;
+      opacity: 0.6;
+      align-self: center;
+    }
+    #reset-setup-link.visible { display: block; }
+
+    /* ── Bottom controls ──────────────────────────────── */
+    #bottom-controls {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      animation: fadeUp 0.8s ease 0.25s both;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 13px 28px;
+      border-radius: 4px;
+      border: 2px solid var(--btn-bg);
+      background: var(--btn-bg);
+      color: var(--btn-text);
+      font-family: 'Crimson Pro', serif;
+      font-size: 1.05rem;
+      font-weight: 400;
+      cursor: pointer;
+      text-decoration: none;
+      transition: opacity 0.2s, transform 0.15s;
+      -webkit-tap-highlight-color: transparent;
+      width: 100%;
+    }
+    .btn:active { transform: scale(0.97); opacity: 0.85; }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--btn-bg);
+    }
+
+    .btn-sm {
+      padding: 9px 18px;
+      font-size: 0.95rem;
+    }
+
+    .btn.copied { opacity: 0.75; }
+
+    /* New quote button */
+    #new-quote-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-family: 'Crimson Pro', serif;
+      font-size: 0.9rem;
+      cursor: pointer;
+      letter-spacing: 0.04em;
+      padding: 4px 8px;
+      -webkit-tap-highlight-color: transparent;
+    }
+    #new-quote-btn:active { opacity: 0.6; }
+
+    /* Social icons row */
+    #social-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .social-btn {
+      background: none;
+      border: none;
+      padding: 6px;
+      cursor: pointer;
+      opacity: 0.65;
+      transition: opacity 0.2s, transform 0.15s;
+      -webkit-tap-highlight-color: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .social-btn:active { transform: scale(0.9); }
+    .social-btn svg { width: 30px; height: 30px; }
+
+    #social-label {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      text-align: center;
+      opacity: 0.75;
+    }
+
+    /* Settings gear */
+    #settings-btn {
+      position: absolute;
+      bottom: 18px;
+      right: 18px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--text-muted);
+      opacity: 0.6;
+      padding: 6px;
+      -webkit-tap-highlight-color: transparent;
+      transition: opacity 0.2s;
+    }
+    #settings-btn:active { opacity: 1; }
+    #settings-btn svg { width: 26px; height: 26px; }
+
+    /* ══════════════════════════════════════════════════
+       SETTINGS PAGE
+    ══════════════════════════════════════════════════ */
+    #settings-page { flex-direction: column; }
+
+    .settings-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 20px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .settings-header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      font-weight: 600;
+      flex: 1;
+    }
+
+    #back-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--text);
+      padding: 4px;
+      -webkit-tap-highlight-color: transparent;
+      display: flex;
+      align-items: center;
+    }
+    #back-btn svg { width: 22px; height: 22px; }
+
+    .settings-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    .settings-section h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 6px;
+      opacity: 0.85;
+    }
+
+    /* Checkboxes */
+    .check-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 4px;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: background 0.15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .check-item:active { background: var(--card-bg); }
+
+    .check-item input[type="checkbox"] {
+      width: 18px; height: 18px;
+      accent-color: var(--btn-bg);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .check-item label {
+      font-size: 1rem;
+      cursor: pointer;
+      flex: 1;
+    }
+
+    /* Social app icons in settings */
+    .social-check-icon {
+      width: 22px; height: 22px;
+      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .social-check-icon svg { width: 20px; height: 20px; }
+
+    /* Theme selector */
+    .theme-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .theme-swatch {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .swatch-circle {
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      border: 3px solid transparent;
+      background: linear-gradient(135deg, var(--s1), var(--s2));
+      transition: border-color 0.2s, transform 0.15s;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .theme-swatch.selected .swatch-circle {
+      border-color: var(--border);
+      transform: scale(1.12);
+    }
+    .swatch-label {
+      font-size: 0.78rem;
+      text-align: center;
+      color: var(--text-muted);
+    }
+    .theme-swatch.selected .swatch-label {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    /* URL inputs */
+    .url-group {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      margin-bottom: 12px;
+    }
+    .url-group label {
+      font-size: 0.82rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+    .url-group input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: 4px;
+      background: var(--card-bg);
+      color: var(--text);
+      font-family: 'Crimson Pro', serif;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .url-group input:focus { border-color: var(--accent); }
+
+    /* Animations */
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    .quote-transition { animation: fadeIn 0.45s ease both; }
+
+    /* Scrollbar */
+    .settings-body::-webkit-scrollbar { width: 4px; }
+    .settings-body::-webkit-scrollbar-track { background: transparent; }
+    .settings-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; opacity: 0.4; }
+
+    /* Divider */
+    hr.divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      opacity: 0.3;
+      margin: 0;
+    }
+  </style>
+</head>
+
+<body>
+<div id="frame">
+
+  <!-- ══ MAIN PAGE ══════════════════════════════════════ -->
+  <div id="main-page" class="page active" style="position:relative;">
+
+    <div id="app-title">Unscrolled</div>
+
+    <!-- Quote display -->
+    <div id="quote-card">
+      <div id="quote-text" class="quote-transition"></div>
+      <div id="quote-ref"></div>
+      <div id="quote-source-label"></div>
+    </div>
+
+    <!-- ── Setup Prompt ────────────────────────────────── -->
+    <div id="setup-prompt">
+      <div class="setup-card">
+
+        <!-- Step 1 done badge -->
+        <div id="step1-done-badge" class="step-done-badge">
+          <span class="check-circle">✓</span>
+          <span>Shortcut set up — almost there!</span>
+        </div>
+
+        <!-- STEP 1 -->
+        <div id="step1-block" class="setup-step-block">
+          <div class="setup-step-label">
+            <span class="step-number">1</span>
+            Set up your iOS Shortcut
+          </div>
+          <p class="setup-step-desc">
+            Tap below to copy this app's URL and open Shortcuts, then:
+          </p>
+          <ul class="setup-substeps">
+            <li>Select "Automation" (bottom‑middle tab)</li>
+            <li>Tap "+" → "Create Personal Automation"</li>
+            <li>Select "App" from the list</li>
+            <li>Choose your social media apps → "Is Opened" → "Run Immediately"</li>
+            <li>Add the action "Open URL" and paste the copied URL</li>
+            <li>Save — done!</li>
+          </ul>
+          <button class="btn" id="copy-open-btn" onclick="handleStep1()">
+            📋 Copy URL &amp; Open Shortcuts
+          </button>
+        </div>
+
+        <hr class="step-divider" />
+
+        <!-- STEP 2 (dimmed until step 1 done) -->
+        <div id="step2-block" class="setup-step-block dimmed">
+          <div class="setup-step-label">
+            <span class="step-number">2</span>
+            Choose your quote libraries
+          </div>
+          <p class="setup-step-desc">
+            Select which texts you'd like quotes from — your choice will be remembered.
+          </p>
+          <button class="btn" onclick="showSettings()">
+            ⚙️ Open Settings
+          </button>
+        </div>
+
+      </div>
+
+      <button id="reset-setup-link" onclick="resetSetup()">
+        ← Haven't set up the shortcut yet?
+      </button>
+    </div>
+    <!-- /setup-prompt -->
+
+    <!-- Bottom controls -->
+    <div id="bottom-controls">
+      <a id="open-scripture-btn" href="#" target="_blank" class="btn" style="display:none;">
+        📖 Open Source
+      </a>
+
+      <button id="new-quote-btn" onclick="showNewQuote()">↻ New Quote</button>
+
+      <hr class="divider" style="width:100%; margin:4px 0;" />
+
+      <div id="social-label">Or continue to social media:</div>
+      <div id="social-row"></div>
+
+      <div style="font-size:0.75rem; color:var(--text-muted); opacity:0.65; text-align:center;">
+        Go to settings to edit library selection
+      </div>
+    </div>
+
+    <!-- Settings gear -->
+    <button id="settings-btn" onclick="showSettings()" aria-label="Settings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- ══ SETTINGS PAGE ═══════════════════════════════════ -->
+  <div id="settings-page" class="page">
+    <div class="settings-header">
+      <button id="back-btn" onclick="showMain()" aria-label="Back">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+      </button>
+      <h1>Settings</h1>
+    </div>
+
+    <div class="settings-body">
+      <div class="settings-section">
+        <h2>Quote Libraries</h2>
+        <div id="library-checks"></div>
+      </div>
+      <div class="settings-section">
+        <h2>Social Media Apps</h2>
+        <div id="social-checks"></div>
+      </div>
+      <div class="settings-section">
+        <h2>Theme</h2>
+        <div class="theme-grid" id="theme-grid"></div>
+      </div>
+      <div class="settings-section">
+        <h2>Custom Scripture URLs</h2>
+        <div id="url-inputs"></div>
+        <button class="btn btn-outline btn-sm" onclick="resetUrls()" style="margin-top:4px;">Reset to Default</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /frame -->
+
+<script>
+// ─── Quotes ──────────────────────────────────────────────────────────────────
+const QUOTE_LIBRARY = {
+  "The Bible": [
+    {text:"Be strong and of a good courage, fear not",reference:"Deuteronomy 31:6"},
+    {text:"For the LORD thy God, he it is that doth go with thee; he will not fail thee, nor forsake thee.",reference:"Deuteronomy 31:6"},
+    {text:"Have not I commanded thee? Be strong and of a good courage; be not afraid, neither be thou dismayed: for the LORD thy God is with thee whithersoever thou goest.",reference:"Joshua 1:9"},
+    {text:"Be of good courage, and he shall strengthen your heart, all ye that hope in the LORD.",reference:"Psalm 31:24"},
+    {text:"But they that wait upon the LORD shall renew their strength; they shall mount up with wings as eagles; they shall run, and not be weary; and they shall walk, and not faint.",reference:"Isaiah 40:31"},
+    {text:"Peace I leave with you, my peace I give unto you: not as the world giveth, give I unto you. Let not your heart be troubled, neither let it be afraid.",reference:"John 14:27"},
+    {text:"Blessed be God, even the Father of our Lord Jesus Christ, the Father of mercies, and the God of all comfort",reference:"2 Corinthians 1:3-4"},
+    {text:"Wherefore comfort yourselves together, and edify one another, even as also ye do.",reference:"1 Thessalonians 5:11"},
+    {text:"The peace of God, which passeth all understanding, shall keep your hearts and minds through Christ Jesus.",reference:"Philippians 4:7"},
+    {text:"Casting all your care upon him; for he careth for you.",reference:"1 Peter 5:7"},
+    {text:"The LORD is my light and my salvation; whom shall I fear? the LORD is the strength of my life; of whom shall I be afraid?",reference:"Psalm 27:1"},
+    {text:"Behold, God is my salvation; I will trust, and not be afraid: for the LORD JEHOVAH is my strength and my song; he also is become my salvation.",reference:"Isaiah 12:2"},
+    {text:"The LORD GOD is my strength, and he will make my feet like hinds' feet, and he will make me to walk upon mine high places.",reference:"Habakkuk 3:19"},
+    {text:"Finally, my brethren, be strong in the Lord, and in the power of his might.",reference:"Ephesians 6:10"},
+    {text:"I can do all things through Christ which strengtheneth me.",reference:"Philippians 4:13"},
+    {text:"God is our refuge and strength, a very present help in trouble.",reference:"Psalm 46:1"},
+    {text:"It is God that girdeth me with strength, and maketh my way perfect.",reference:"Psalm 18:32"},
+    {text:"Trust in the LORD with all thine heart; and lean not unto thine own understanding. In all thy ways acknowledge him, and he shall direct thy paths.",reference:"Proverbs 3:5-6"},
+    {text:"And they that know thy name will put their trust in thee: for thou, LORD, hast not forsaken them that seek thee.",reference:"Psalm 9:10"},
+    {text:"What time I am afraid, I will trust in thee. In God I will praise his word, in God have I put my trust; I will not fear what flesh can do unto me.",reference:"Psalm 56:3-4"},
+    {text:"Blessed is the man that trusteth in the LORD, and whose hope the LORD is.",reference:"Jeremiah 17:7"},
+    {text:"Commit thy way unto the LORD; trust also in him; and he shall bring it to pass.",reference:"Psalm 37:5"},
+    {text:"They that trust in the LORD shall be as mount Zion, which cannot be removed, but abideth for ever.",reference:"Psalm 125:1"},
+    {text:"Trust in the LORD, and do good; so shalt thou dwell in the land, and verily thou shalt be fed.",reference:"Psalm 37:3"},
+    {text:"The LORD is good, a strong hold in the day of trouble; and he knoweth them that trust in him.",reference:"Nahum 1:7"},
+    {text:"I will say of the LORD, He is my refuge and my fortress: my God; in him will I trust.",reference:"Psalm 91:2"},
+    {text:"For God hath not given us the spirit of fear; but of power, and of love, and of a sound mind.",reference:"2 Timothy 1:7"},
+    {text:"I sought the LORD, and he heard me, and delivered me from all my fears.",reference:"Psalm 34:4"},
+    {text:"For I the LORD thy God will hold thy right hand, saying unto thee, Fear not; I will help thee.",reference:"Isaiah 41:13"},
+    {text:"There is no fear in love; but perfect love casteth out fear",reference:"1 John 4:18"},
+    {text:"Yea, though I walk through the valley of the shadow of death, I will fear no evil: for thou art with me",reference:"Psalm 23:4"},
+    {text:"Say to them that are of a fearful heart, Be strong, fear not",reference:"Isaiah 35:4"},
+    {text:"In God have I put my trust: I will not be afraid what man can do unto me.",reference:"Psalm 56:11"},
+    {text:"So that we may boldly say, The LORD is my helper, and I will not fear what man shall do unto me.",reference:"Hebrews 13:6"},
+    {text:"He is my refuge and my fortress: my God; in him will I trust.",reference:"Psalm 91:1-2"},
+    {text:"The name of the LORD is a strong tower: the righteous runneth into it, and is safe.",reference:"Proverbs 18:10"},
+    {text:"Thou art my hiding place; thou shalt preserve me from trouble; thou shalt compass me about with songs of deliverance.",reference:"Psalm 32:7"},
+    {text:"The angel of the LORD encampeth round about them that fear him, and delivereth them.",reference:"Psalm 34:7"},
+    {text:"The God of my rock; in him will I trust: he is my shield, and the horn of my salvation, my high tower, and my refuge.",reference:"2 Samuel 22:3-4"},
+    {text:"When thou passest through the waters, I will be with thee; and through the rivers, they shall not overflow thee: when thou walkest through the fire, thou shalt not be burned.",reference:"Isaiah 43:2"},
+    {text:"He will not suffer thy foot to be moved: he that keepeth thee will not slumber. Behold, he that keepeth Israel shall neither slumber nor sleep.",reference:"Psalm 121:3-4"},
+    {text:"Though I walk in the midst of trouble, thou wilt revive me: thou shalt stretch forth thine hand against the wrath of mine enemies, and thy right hand shall save me.",reference:"Psalm 138:7"},
+    {text:"These things I have spoken unto you, that in me ye might have peace. In the world ye shall have tribulation: but be of good cheer; I have overcome the world.",reference:"John 16:33"},
+    {text:"For I reckon that the sufferings of this present time are not worthy to be compared with the glory which shall be revealed in us.",reference:"Romans 8:18"},
+    {text:"For our light affliction, which is but for a moment, worketh for us a far more exceeding and eternal weight of glory.",reference:"2 Corinthians 4:17"},
+    {text:"My brethren, count it all joy when ye fall into divers temptations; Knowing this, that the trying of your faith worketh patience.",reference:"James 1:2-4"},
+    {text:"Many are the afflictions of the righteous: but the LORD delivereth him out of them all.",reference:"Psalm 34:19"},
+    {text:"And we know that all things work together for good to them that love God, to them who are the called according to his purpose.",reference:"Romans 8:28"},
+    {text:"For his anger endureth but a moment; in his favour is life: weeping may endure for a night, but joy cometh in the morning.",reference:"Psalm 30:5"},
+    {text:"It is of the LORD's mercies that we are not consumed, because his compassions fail not. They are new every morning: great is thy faithfulness.",reference:"Lamentations 3:22-23"},
+  ],
+  "The Hebrew Bible (Tanakh)": [
+    {text:"Hear, O Israel: The Lord our God, the Lord is one.",reference:"Deuteronomy 6:4"},
+    {text:"Love your neighbor as yourself.",reference:"Leviticus 19:18"},
+    {text:"You shall be holy, for I the Lord your God am holy.",reference:"Leviticus 19:2"},
+    {text:"The Lord will fight for you; you need only to be still.",reference:"Exodus 14:14"},
+    {text:"The Lord is my shepherd; I shall not want.",reference:"Psalm 23:1"},
+    {text:"Trust in the Lord with all your heart.",reference:"Proverbs 3:5"},
+    {text:"Cast your burden on the Lord, and he will sustain you.",reference:"Psalm 55:22"},
+    {text:"Your word is a lamp to my feet and a light to my path.",reference:"Psalm 119:105"},
+    {text:"Be strong and courageous; do not fear or be dismayed.",reference:"Deuteronomy 31:6"},
+    {text:"The Lord bless you and keep you.",reference:"Numbers 6:24"},
+    {text:"Happy is the man who finds wisdom.",reference:"Proverbs 3:13"},
+    {text:"Delight yourself in the Lord.",reference:"Psalm 37:4"},
+    {text:"Honor your father and your mother.",reference:"Exodus 20:12"},
+    {text:"The Lord is near to all who call on Him.",reference:"Psalm 145:18"},
+    {text:"Do justice, love kindness, and walk humbly with your God.",reference:"Micah 6:8"},
+    {text:"A joyful heart is good medicine.",reference:"Proverbs 17:22"},
+    {text:"Seek peace and pursue it.",reference:"Psalm 34:14"},
+    {text:"The Lord is my light and my salvation; whom shall I fear?",reference:"Psalm 27:1"},
+    {text:"Blessed are those who trust in the Lord.",reference:"Jeremiah 17:7"},
+    {text:"The Lord is good to all; He has compassion on all He has made.",reference:"Psalm 145:9"},
+    {text:"Taste and see that the Lord is good.",reference:"Psalm 34:8"},
+    {text:"Commit your way to the Lord; trust in Him and He will act.",reference:"Psalm 37:5"},
+    {text:"God is our refuge and strength, an ever-present help in trouble.",reference:"Psalm 46:1"},
+    {text:"Be still and know that I am God.",reference:"Psalm 46:10"},
+    {text:"The joy of the Lord is your strength.",reference:"Nehemiah 8:10"},
+    {text:"Let love and faithfulness never leave you.",reference:"Proverbs 3:3"},
+    {text:"The Lord lifts up those who are bowed down.",reference:"Psalm 146:8"},
+    {text:"Do not be afraid, for I am with you.",reference:"Isaiah 41:10"},
+    {text:"I will give thanks to the Lord with my whole heart.",reference:"Psalm 9:1"},
+    {text:"Those who hope in the Lord will renew their strength.",reference:"Isaiah 40:31"},
+    {text:"Give thanks to the Lord, for He is good.",reference:"Psalm 118:1"},
+    {text:"The Lord is compassionate and gracious.",reference:"Psalm 103:8"},
+    {text:"He heals the brokenhearted and binds up their wounds.",reference:"Psalm 147:3"},
+    {text:"I sought the Lord, and He answered me.",reference:"Psalm 34:4"},
+  ],
+  "The Quran": [
+    {text:"God does not burden any soul with more than it can bear.",reference:"Quran 2:286"},
+    {text:"Do not lose heart or despair — if you are true believers you have the upper hand.",reference:"Quran 3:139"},
+    {text:"So truly where there is hardship there is also ease.",reference:"Quran 94:5"},
+    {text:"My mercy encompasses all things.",reference:"Quran 7:156"},
+    {text:"God will be enough for those who put their trust in Him.",reference:"Quran 65:3"},
+    {text:"Indeed, I am near.",reference:"Quran 2:186"},
+    {text:"He knows what is in every heart.",reference:"Quran 67:13"},
+    {text:"You who believe, seek help through steadfastness and prayer, for God is with the steadfast.",reference:"Quran 2:153"},
+    {text:"Do not despair of God's mercy.",reference:"Quran 39:53"},
+    {text:"People who repent and do good deeds truly return to God.",reference:"Quran 25:71"},
+    {text:"Yet I am most Forgiving towards those who repent, believe, do righteous deeds, and stay on the right path.",reference:"Quran 20:82"},
+    {text:"And speak to people good words.",reference:"Quran 2:83"},
+    {text:"So whoever does an atom's weight of good will see it.",reference:"Quran 99:7"},
+    {text:"For God is with those who are mindful of Him and who do good.",reference:"Quran 16:128"},
+    {text:"Be steadfast: God does not let the rewards of those who do good go to waste.",reference:"Quran 11:115"},
+    {text:"Be patient: your patience is only with God.",reference:"Quran 16:127"},
+    {text:"So be patient with gracious patience.",reference:"Quran 70:5"},
+    {text:"Say, 'Are those who know equal to those who do not know?' Only those with understanding will take heed.",reference:"Quran 39:9"},
+    {text:"God will raise up by several degrees those of you who believe and those who have been given knowledge.",reference:"Quran 58:11"},
+  ],
+  "Positive Affirmations": [
+    "I am worthy of love and respect.",
+    "Every day in every way, I am getting better and better.",
+    "I am worthy of love, success, and happiness.",
+    "I believe in myself and my abilities.",
+    "I am growing stronger, wiser, and more resilient every day.",
+    "I radiate positivity and attract good things into my life.",
+    "I am enough, just as I am.",
+    "I choose peace over worry.",
+    "I deserve to take up space and be heard.",
+    "My potential is limitless.",
+    "I trust the timing of my life.",
+    "I am calm, centered, and in control.",
+    "Challenges help me grow and become better.",
+    "I am proud of how far I have come.",
+    "Today is a fresh start filled with endless possibilities.",
+    "I treat myself with compassion and kindness.",
+    "Every step I take is progress.",
+    "I am in charge of my thoughts, and I choose positivity.",
+    "I let go of what I cannot control and focus on what I can.",
+    "My life is filled with purpose and meaning.",
+    "I have the power to create change in my life.",
+    "I am surrounded by love and support.",
+    "I am open to new opportunities and experiences.",
+    "I am becoming the best version of myself.",
+    "I trust myself to make the right decisions.",
+    "I choose to see the good in people and situations.",
+    "I have the strength to overcome any challenge.",
+    "I am grounded, mindful, and focused.",
+    "I release fear and embrace love.",
+    "My mind is clear, and my heart is full.",
+    "I celebrate my small wins and progress.",
+    "I am constantly learning and evolving.",
+    "I bring light and positivity wherever I go.",
+    "I am grateful for the present moment.",
+    "I attract abundance and prosperity into my life.",
+    "I am capable of achieving my goals.",
+    "I treat myself with patience and respect.",
+    "I forgive myself and others easily and freely.",
+    "I am aligned with my purpose and passion.",
+    "Joy is my natural state.",
+    "I speak kindly to myself and others.",
+    "I am a magnet for miracles.",
+  ],
+  "The Book of Mormon": [
+    {text:"I will go and do the things which the Lord hath commanded.",reference:"1 Nephi 3:7"},
+    {text:"The Lord giveth no commandments unto the children of men, save he shall prepare a way for them that they may accomplish the thing which he commandeth them.",reference:"1 Nephi 3:7"},
+    {text:"Adam fell that men might be; and men are, that they might have joy.",reference:"2 Nephi 2:25"},
+    {text:"They are free to choose liberty and eternal life…or…captivity and death.",reference:"2 Nephi 2:27"},
+    {text:"All are alike unto God.",reference:"2 Nephi 26:33"},
+    {text:"God will give unto the children of men line upon line, precept upon precept.",reference:"2 Nephi 28:30"},
+    {text:"Feast upon the words of Christ; for behold, the words of Christ will tell you all things what ye should do.",reference:"2 Nephi 32:3"},
+    {text:"Ye must pray always.",reference:"2 Nephi 32:8–9"},
+    {text:"When ye are in the service of your fellow beings ye are only in the service of your God.",reference:"Mosiah 2:17"},
+    {text:"Those that keep the commandments of God…are blessed in all things.",reference:"Mosiah 2:41"},
+    {text:"Believe in God;…believe that he has all wisdom.",reference:"Mosiah 4:9"},
+    {text:"And he shall go forth, suffering pains and afflictions and temptations of every kind.",reference:"Alma 7:11"},
+    {text:"There must be an atonement made,…an infinite and eternal sacrifice.",reference:"Alma 34:9–10"},
+    {text:"Go no more after the lusts of your eyes.",reference:"Alma 39:9"},
+    {text:"Wickedness never was happiness.",reference:"Alma 41:10"},
+    {text:"It is upon the rock of our Redeemer…that ye must build your foundation.",reference:"Helaman 5:12"},
+    {text:"Be perfect even as I, or your Father who is in heaven is perfect.",reference:"3 Nephi 12:48"},
+    {text:"Ye receive no witness until after the trial of your faith.",reference:"Ether 12:6"},
+    {text:"If men come unto me…then will I make weak things become strong unto them.",reference:"Ether 12:27"},
+    {text:"Charity is the pure love of Christ.",reference:"Moroni 7:45–48"},
+    {text:"Ask with a sincere heart, with real intent, having faith in Christ — by the power of the Holy Ghost ye may know the truth of all things.",reference:"Moroni 10:4–5"},
+    {text:"Faith is not to have a perfect knowledge of things.",reference:"Alma 32:21"},
+    {text:"If ye have faith, ye hope for things which are not seen, which are true.",reference:"Alma 32:21"},
+    {text:"But seek ye first the kingdom of God and his righteousness, and all these things shall be added unto you.",reference:"3 Nephi 13:33"},
+    {text:"Ask, and it shall be given unto you; seek, and ye shall find; knock, and it shall be opened unto you.",reference:"3 Nephi 14:7"},
+  ],
+};
+
+const SCRIPTURE_URLS = {
+  "The Bible": "https://www.bible.com/bible",
+  "The Hebrew Bible (Tanakh)": "https://www.sefaria.org/texts/Tanakh",
+  "The Quran": "https://quran.com/",
+  "Positive Affirmations": "https://www.developgoodhabits.com/positive-affirmations/",
+  "The Book of Mormon": "https://www.churchofjesuschrist.org/study/scriptures/bofm?lang=eng",
+};
+
+const SOCIAL_APPS = {
+  Instagram: { url: "https://instagram.com/" },
+  Facebook:  { url: "https://facebook.com/" },
+  TikTok:    { url: "https://www.tiktok.com/" },
+  X:         { url: "https://twitter.com/" },
+  YouTube:   { url: "https://youtube.com/" },
+};
+
+const SOCIAL_ICONS = {
+  Instagram: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>`,
+  Facebook:  `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>`,
+  TikTok:    `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.27 8.27 0 004.84 1.55V6.79a4.85 4.85 0 01-1.07-.1z"/></svg>`,
+  X:         `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>`,
+  YouTube:   `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 00-1.95 1.96A29 29 0 001 12a29 29 0 00.46 5.58A2.78 2.78 0 003.41 19.6C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 001.95-1.95A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon fill="white" points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02"/></svg>`,
+};
+
+const THEMES = [
+  { id:"light",  label:"Light",  s1:"#FAFAF6", s2:"#F0F0EB" },
+  { id:"dark",   label:"Dark",   s1:"#1A1A1A", s2:"#333333" },
+  { id:"blue",   label:"Blue",   s1:"#BBDEFB", s2:"#5B9BD5" },
+  { id:"red",    label:"Red",    s1:"#FFCDD2", s2:"#E57373" },
+  { id:"green",  label:"Green",  s1:"#C8E6C9", s2:"#66BB6A" },
+  { id:"purple", label:"Purple", s1:"#E1BEE7", s2:"#AB47BC" },
+];
+
+// ─── State ────────────────────────────────────────────────────────────────────
+let state = {
+  selectedLibraries: { "The Bible": false, "The Hebrew Bible (Tanakh)": false, "The Quran": false, "Positive Affirmations": false, "The Book of Mormon": false },
+  selectedSocialApps: { Instagram: true, Facebook: true, TikTok: true, X: true, YouTube: true },
+  theme: "light",
+  customUrls: { ...SCRIPTURE_URLS },
+  currentQuote: null,
+  step1Done: false,
+};
+
+// ─── Persistence ──────────────────────────────────────────────────────────────
+function saveState() {
+  try { localStorage.setItem("unscrolled_state", JSON.stringify(state)); } catch(e) {}
+}
+
+function loadState() {
+  try {
+    const saved = localStorage.getItem("unscrolled_state");
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      state = { ...state, ...parsed };
+      state.customUrls = { ...SCRIPTURE_URLS, ...state.customUrls };
+    }
+  } catch(e) {}
+}
+
+// ─── Theme ────────────────────────────────────────────────────────────────────
+function applyTheme(t) {
+  document.documentElement.setAttribute("data-theme", t);
+}
+
+// ─── Setup: Step 1 handler ────────────────────────────────────────────────────
+function handleStep1() {
+  // 1. Copy URL to clipboard
+  const url = window.location.href;
+  try {
+    navigator.clipboard.writeText(url);
+  } catch(e) {
+    // Fallback for non-HTTPS or older browsers
+    const ta = document.createElement("textarea");
+    ta.value = url;
+    ta.style.cssText = "position:fixed;opacity:0;top:0;left:0;";
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand("copy"); } catch(e2) {}
+    document.body.removeChild(ta);
+  }
+
+  // 2. Show confirmation text on button
+  const btn = document.getElementById("copy-open-btn");
+  btn.textContent = "✓ Copied! Opening Shortcuts…";
+  btn.classList.add("copied");
+
+  // 3. Navigate to Shortcuts (deep link, fallback to App Store)
+  setTimeout(() => {
+    window.location.href = "shortcuts://";
+    setTimeout(() => {
+      window.open("https://apps.apple.com/app/shortcuts/id915249334", "_blank");
+    }, 1000);
+  }, 300);
+
+  // 4. Collapse step 1 and reveal step 2 after confirmation is visible
+  setTimeout(collapseStep1, 1400);
+}
+
+function collapseStep1() {
+  state.step1Done = true;
+  saveState();
+
+  document.getElementById("step1-block").classList.add("collapsed");
+  document.getElementById("step1-done-badge").classList.add("visible");
+  document.getElementById("step2-block").classList.remove("dimmed");
+  document.getElementById("reset-setup-link").classList.add("visible");
+}
+
+function resetSetup() {
+  state.step1Done = false;
+  saveState();
+
+  document.getElementById("step1-block").classList.remove("collapsed");
+  document.getElementById("step1-done-badge").classList.remove("visible");
+  document.getElementById("step2-block").classList.add("dimmed");
+  document.getElementById("reset-setup-link").classList.remove("visible");
+
+  const btn = document.getElementById("copy-open-btn");
+  btn.textContent = "📋 Copy URL & Open Shortcuts";
+  btn.classList.remove("copied");
+}
+
+function applySetupState() {
+  // Restore collapsed state if user already completed step 1 in a prior visit
+  if (state.step1Done) {
+    document.getElementById("step1-block").classList.add("collapsed");
+    document.getElementById("step1-done-badge").classList.add("visible");
+    document.getElementById("step2-block").classList.remove("dimmed");
+    document.getElementById("reset-setup-link").classList.add("visible");
+  }
+}
+
+// ─── Quote logic ──────────────────────────────────────────────────────────────
+function getRandomQuote() {
+  const activeLibraries = Object.keys(state.selectedLibraries).filter(k => state.selectedLibraries[k]);
+  if (!activeLibraries.length) return null;
+
+  const pool = [];
+  activeLibraries.forEach(lib => {
+    (QUOTE_LIBRARY[lib] || []).forEach(q => pool.push({ lib, q }));
+  });
+
+  return pool.length ? pool[Math.floor(Math.random() * pool.length)] : null;
+}
+
+function showNewQuote() {
+  const item = getRandomQuote();
+  state.currentQuote = item;
+
+  const qtEl     = document.getElementById("quote-text");
+  const qrEl     = document.getElementById("quote-ref");
+  const qsEl     = document.getElementById("quote-source-label");
+  const btnEl    = document.getElementById("open-scripture-btn");
+  const setupEl  = document.getElementById("setup-prompt");
+  const cardEl   = document.getElementById("quote-card");
+  const newQEl   = document.getElementById("new-quote-btn");
+  const bottomEl = document.getElementById("bottom-controls");
+
+  if (!item) {
+    cardEl.style.display   = "none";
+    bottomEl.style.display = "none";
+    setupEl.style.display  = "flex";
+    return;
+  }
+
+  setupEl.style.display  = "none";
+  cardEl.style.display   = "flex";
+  bottomEl.style.display = "flex";
+  newQEl.style.display   = "block";
+
+  // Fade transition
+  qtEl.classList.remove("quote-transition");
+  void qtEl.offsetWidth;
+  qtEl.classList.add("quote-transition");
+
+  const { lib, q } = item;
+  if (typeof q === "string") {
+    qtEl.textContent = q;
+    qrEl.textContent = "";
+    qsEl.textContent = "Positive Affirmation";
+  } else {
+    qtEl.textContent = q.text;
+    qrEl.textContent = q.reference || "";
+    qsEl.textContent = lib;
+  }
+
+  const url = state.customUrls[lib] || SCRIPTURE_URLS[lib];
+  if (url && lib !== "Positive Affirmations") {
+    btnEl.style.display = "inline-flex";
+    btnEl.textContent   = `📖 Open ${lib}`;
+    btnEl.href          = url;
+  } else {
+    btnEl.style.display = "none";
+  }
+}
+
+// ─── Social row ───────────────────────────────────────────────────────────────
+function renderSocialRow() {
+  const row   = document.getElementById("social-row");
+  const label = document.getElementById("social-label");
+  const activeApps = Object.keys(state.selectedSocialApps).filter(k => state.selectedSocialApps[k]);
+  row.innerHTML = "";
+
+  if (!activeApps.length) { label.style.display = "none"; return; }
+  label.style.display = "block";
+
+  activeApps.forEach(app => {
+    const btn = document.createElement("button");
+    btn.className = "social-btn";
+    btn.title = app;
+    btn.setAttribute("aria-label", `Open ${app}`);
+    btn.innerHTML = SOCIAL_ICONS[app] || app;
+    btn.addEventListener("click", () => window.open(SOCIAL_APPS[app].url, "_blank"));
+    row.appendChild(btn);
+  });
+}
+
+// ─── Settings builders ────────────────────────────────────────────────────────
+function buildSettings() {
+  buildLibraryChecks();
+  buildSocialChecks();
+  buildThemeGrid();
+  buildUrlInputs();
+}
+
+function buildLibraryChecks() {
+  const el = document.getElementById("library-checks");
+  el.innerHTML = "";
+  Object.keys(state.selectedLibraries).forEach(lib => {
+    const id = "lib-" + lib.replace(/\s+/g,"_");
+    const wrap = document.createElement("div");
+    wrap.className = "check-item";
+    wrap.innerHTML = `<input type="checkbox" id="${id}" ${state.selectedLibraries[lib] ? "checked" : ""}/><label for="${id}">${lib}</label>`;
+    wrap.querySelector("input").addEventListener("change", e => {
+      state.selectedLibraries[lib] = e.target.checked;
+      saveState();
+      buildUrlInputs();
+      showNewQuote();
+    });
+    el.appendChild(wrap);
+  });
+}
+
+function buildSocialChecks() {
+  const el = document.getElementById("social-checks");
+  el.innerHTML = "";
+  Object.keys(SOCIAL_APPS).forEach(app => {
+    const id = "app-" + app;
+    const wrap = document.createElement("div");
+    wrap.className = "check-item";
+    wrap.innerHTML = `<input type="checkbox" id="${id}" ${state.selectedSocialApps[app] ? "checked" : ""}/><span class="social-check-icon">${SOCIAL_ICONS[app]}</span><label for="${id}">${app}</label>`;
+    wrap.querySelector("input").addEventListener("change", e => {
+      state.selectedSocialApps[app] = e.target.checked;
+      saveState();
+      renderSocialRow();
+    });
+    el.appendChild(wrap);
+  });
+}
+
+function buildThemeGrid() {
+  const grid = document.getElementById("theme-grid");
+  grid.innerHTML = "";
+  THEMES.forEach(t => {
+    const div = document.createElement("div");
+    div.className = "theme-swatch" + (state.theme === t.id ? " selected" : "");
+    div.innerHTML = `
+      <div class="swatch-circle" style="--s1:${t.s1};--s2:${t.s2};">
+        ${state.theme === t.id ? `<svg viewBox="0 0 24 24" fill="none" stroke="${t.id==='dark'?'#fff':'#333'}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;"><polyline points="20 6 9 17 4 12"/></svg>` : ""}
+      </div>
+      <span class="swatch-label">${t.label}</span>`;
+    div.addEventListener("click", () => {
+      state.theme = t.id;
+      saveState();
+      applyTheme(t.id);
+      buildThemeGrid();
+    });
+    grid.appendChild(div);
+  });
+}
+
+function buildUrlInputs() {
+  const el = document.getElementById("url-inputs");
+  el.innerHTML = "";
+  const activeLibs = Object.keys(state.selectedLibraries)
+    .filter(lib => state.selectedLibraries[lib] && lib !== "Positive Affirmations");
+
+  if (!activeLibs.length) {
+    el.innerHTML = `<p style="font-size:0.9rem;color:var(--text-muted);">Select a library above to customize its URL.</p>`;
+    return;
+  }
+  activeLibs.forEach(lib => {
+    const grp = document.createElement("div");
+    grp.className = "url-group";
+    grp.innerHTML = `<label>${lib}</label><input type="url" value="${state.customUrls[lib] || SCRIPTURE_URLS[lib]}" placeholder="${SCRIPTURE_URLS[lib]}"/>`;
+    grp.querySelector("input").addEventListener("input", e => {
+      state.customUrls[lib] = e.target.value;
+      saveState();
+    });
+    el.appendChild(grp);
+  });
+}
+
+function resetUrls() {
+  state.customUrls = { ...SCRIPTURE_URLS };
+  saveState();
+  buildUrlInputs();
+  showNewQuote();
+}
+
+// ─── Navigation ───────────────────────────────────────────────────────────────
+function showSettings() {
+  document.getElementById("main-page").classList.remove("active");
+  document.getElementById("settings-page").classList.add("active");
+  buildSettings();
+}
+
+function showMain() {
+  document.getElementById("settings-page").classList.remove("active");
+  document.getElementById("main-page").classList.add("active");
+  renderSocialRow();
+  showNewQuote();
+}
+
+// ─── Init ─────────────────────────────────────────────────────────────────────
+loadState();
+applyTheme(state.theme);
+applySetupState();
+renderSocialRow();
+showNewQuote();
+</script>
+</body>
+</html>

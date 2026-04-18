@@ -30,8 +30,8 @@ self.addEventListener('message', (e) => {
         }
         self.registration.showNotification(title, {
           body,
-          icon: '/icons/icon-192.png',
-          badge: '/icons/icon-192.png',
+          icon: 'icon.png',
+          badge: 'icon.png',
           tag: 'unscrolled-reminder-' + i,
           renotify: true,
         });

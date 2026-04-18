@@ -64,6 +64,8 @@
     body {
       font-family: 'Crimson Pro', Georgia, serif;
       background: linear-gradient(to bottom, var(--bg1), var(--bg2));
+      min-height: 100vh;
+      min-height: 100dvh;
       background-color: var(--bg2);
       color: var(--text);
       transition: background 0.4s, color 0.4s;
@@ -71,10 +73,6 @@
     }
 
     #frame {
-      height: 100vh;
-      height: 100dvh;
-      /* iOS Safari fix */
-      min-height: -webkit-fill-available;
       border: 10px solid var(--border);
       display: flex;
       flex-direction: column;
@@ -1116,6 +1114,11 @@ applySetupState();
 logOpen();         // count this page load
 renderSocialRow();
 showNewQuote();
+function fitFrame() {
+  document.getElementById("frame").style.height = window.innerHeight + "px";
+}
+fitFrame();
+window.addEventListener("resize", fitFrame);
 
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/service-worker.js');

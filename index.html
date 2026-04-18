@@ -589,11 +589,12 @@
 // so the frame is always exactly the visible screen with no gaps.
 (function fitFrame() {
   const f = document.getElementById("frame");
-  if (f) f.style.height = window.innerHeight + "px";
-  window.addEventListener("resize", () => {
-    const f = document.getElementById("frame");
-    if (f) f.style.height = window.innerHeight + "px";
-  });
+  const set = () => { if (f) f.style.height = window.innerHeight + "px"; };
+  // Run immediately, then again after a short delay to catch iOS recalculation
+  set();
+  setTimeout(set, 100);
+  setTimeout(set, 500);
+  window.addEventListener("resize", set);
 })();
 
 // ─── Quote data ───────────────────────────────────────────────────────────────

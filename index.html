@@ -55,29 +55,35 @@
       --bar-good:#1B5E20; --bar-bad:#B71C1C;
     }
 
-    html, body {
+    html {
+      /* Prevent any scrolling at all - frame fills exactly the screen */
+      overflow: hidden;
+      position: fixed;
+      width: 100%;
       height: 100%;
-      /* Fix iOS Safari bottom gap */
-      min-height: -webkit-fill-available;
     }
 
     body {
       font-family: 'Crimson Pro', Georgia, serif;
-      background: linear-gradient(to bottom, var(--bg1), var(--bg2));
-      min-height: 100vh;
-      min-height: 100dvh;
-      background-color: var(--bg2);
+      /* Solid fallback color = gradient end color so no gap ever shows */
+      background: var(--bg2);
       color: var(--text);
       transition: background 0.4s, color 0.4s;
-      overflow-x: hidden;
+      overflow: hidden;
+      width: 100%;
+      height: 100%;
     }
 
     #frame {
+      /* JS sets exact pixel height via fitFrame() on load */
+      width: 100%;
+      /* Gradient lives here, not on body, so border + bg are one element */
+      background: linear-gradient(to bottom, var(--bg1), var(--bg2));
       border: 10px solid var(--border);
       display: flex;
       flex-direction: column;
       padding: env(safe-area-inset-top, 16px) env(safe-area-inset-right, 16px) env(safe-area-inset-bottom, 16px) env(safe-area-inset-left, 16px);
-      transition: border-color 0.4s;
+      transition: border-color 0.4s, background 0.4s;
       overflow: hidden;
     }
 
@@ -391,13 +397,6 @@
     @keyframes fadeUp   { from { opacity:0; transform:translateY(14px);  } to { opacity:1; transform:translateY(0); } }
     @keyframes fadeIn   { from { opacity:0; } to { opacity:1; } }
     .quote-transition { animation: fadeIn 0.45s ease both; }
-    #social-row, #social-label {
-      opacity: 0;
-      transition: opacity 0.8s ease;
-    }
-    #social-row.revealed, #social-label.revealed {
-      opacity: 1;
-    }
   </style>
 </head>
 <body>
@@ -544,19 +543,19 @@
       <div class="stat-row">
         <div class="stat-card">
           <div class="stat-num" id="stat-good">0</div>
-          <div class="stat-label">Mindful actions today<br><span style="font-size:0.75rem;opacity:0.7">(new quotes / opening source)</span></div>
+          <div class="stat-label">Mindful actions today<br><span style="font-size:0.75rem;opacity:0.7">(new quotes + scripture)</span></div>
         </div>
         <div class="stat-card">
           <div class="stat-num" id="stat-bad">0</div>
-          <div class="stat-label">Social media<br>entrances today</div>
+          <div class="stat-label">Social media<br>continues today</div>
         </div>
       </div>
 
       <div>
         <div class="dash-section-title" style="margin-bottom:12px;">Last 5 Days</div>
         <div class="chart-legend" style="margin-bottom:10px;">
-          <span><span class="legend-dot" style="background:var(--bar-good)"></span>Mindful Actions</span>
-          <span><span class="legend-dot" style="background:var(--bar-bad)"></span>Social Media Entrances</span>
+          <span><span class="legend-dot" style="background:var(--bar-good)"></span>Mindful</span>
+          <span><span class="legend-dot" style="background:var(--bar-bad)"></span>Social continues</span>
         </div>
         <div class="chart-wrap" id="bar-chart"></div>
       </div>
@@ -574,7 +573,7 @@
         </div>
         <div class="stat-card">
           <div class="stat-num" id="stat-bad-alltime">0</div>
-          <div class="stat-label">Social media entrances all time</div>
+          <div class="stat-label">Social continues all time</div>
         </div>
       </div>
 
@@ -584,6 +583,19 @@
 </div><!-- /frame -->
 
 <script>
+// ─── Frame sizing — must run before anything else ────────────────────────────
+// window.innerHeight is the only reliable pixel height on iOS Safari.
+// position:fixed + overflow:hidden on html/body prevents all scrolling,
+// so the frame is always exactly the visible screen with no gaps.
+(function fitFrame() {
+  const f = document.getElementById("frame");
+  if (f) f.style.height = window.innerHeight + "px";
+  window.addEventListener("resize", () => {
+    const f = document.getElementById("frame");
+    if (f) f.style.height = window.innerHeight + "px";
+  });
+})();
+
 // ─── Quote data ───────────────────────────────────────────────────────────────
 const QUOTE_LIBRARY = {
   "The Bible": [
@@ -920,8 +932,6 @@ function renderSocialRow() {
   row.innerHTML = "";
   if (!active.length) { label.style.display="none"; return; }
   label.style.display = "block";
-  label.classList.remove("revealed");
-  row.classList.remove("revealed");
   active.forEach(app => {
     const btn = document.createElement("button");
     btn.className = "social-btn"; btn.title = app;
@@ -933,10 +943,6 @@ function renderSocialRow() {
     });
     row.appendChild(btn);
   });
-  setTimeout(() => {
-    label.classList.add("revealed");
-    row.classList.add("revealed");
-  }, 5000);
 }
 
 // ─── Notifications ────────────────────────────────────────────────────────────
@@ -1077,8 +1083,7 @@ function buildDashboard() {
     const s = state.stats[d] || {good:0,bad:0};
     const goodH = Math.round((s.good / maxVal) * 112);
     const badH  = Math.round((s.bad  / maxVal) * 112);
-    const [yr,mo,dy] = d.split('-').map(Number);
-    const label = d === TODAY ? "Today" : new Date(yr, mo-1, dy).toLocaleDateString(undefined,{weekday:"short"});
+    const label = d === TODAY ? "Today" : new Date(d+"T12:00:00").toLocaleDateString(undefined,{weekday:"short"});
     const col = document.createElement("div"); col.className = "chart-day";
     col.innerHTML = `
       <div class="chart-bars">
@@ -1114,15 +1119,10 @@ applySetupState();
 logOpen();         // count this page load
 renderSocialRow();
 showNewQuote();
-function fitFrame() {
-  document.getElementById("frame").style.height = window.innerHeight + "px";
-}
-fitFrame();
-window.addEventListener("resize", fitFrame);
 
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/service-worker.js');
 }
 </script>
 </body>
-</html>
+</html>s

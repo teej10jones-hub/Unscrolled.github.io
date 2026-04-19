@@ -504,17 +504,6 @@
         <button class="btn btn-outline btn-sm" onclick="resetUrls()" style="margin-top:4px;">Reset to Default</button>
       </div>
 
-      <div class="settings-section">
-        <h2>Notifications</h2>
-        <p style="font-size:0.95rem;color:var(--text-muted);line-height:1.5;margin-bottom:12px;">
-          After you continue to social media, Unscrolled can nudge you back after 5 and 10 minutes. Requires adding to Home Screen (iOS 16.4+).
-        </p>
-        <div id="notif-btn-wrap">
-          <button class="btn btn-outline btn-sm" onclick="requestNotifPermission()">Enable Notifications</button>
-        </div>
-        <p id="notif-status" style="font-size:0.85rem;color:var(--text-muted);margin-top:8px;"></p>
-      </div>
-
     </div>
   </div>
 
@@ -677,19 +666,6 @@ const QUOTE_LIBRARY = {
   ],
 };
 
-// Short quotes only (<=80 chars of text) for notifications
-function getShortQuotes() {
-  const active = Object.keys(state.selectedLibraries).filter(k => state.selectedLibraries[k]);
-  const shorts = [];
-  active.forEach(lib => {
-    (QUOTE_LIBRARY[lib] || []).forEach(q => {
-      const txt = typeof q === 'string' ? q : q.text;
-      if (txt.length <= 90) shorts.push(txt);
-    });
-  });
-  return shorts;
-}
-
 const SCRIPTURE_URLS = {
   "The Bible": "https://www.bible.com/bible",
   "The Hebrew Bible (Tanakh)": "https://www.sefaria.org/texts/Tanakh",
@@ -812,7 +788,6 @@ function logBad() {
   todayStats().bad++;
   state.allTimeBad++;
   saveState();
-  scheduleNotifications();
 }
 
 // ─── Theme ────────────────────────────────────────────────────────────────────
@@ -938,9 +913,10 @@ function renderSocialRow() {
   }, 5000);
 }
 
+
 // ─── Settings builders ────────────────────────────────────────────────────────
 function buildSettings() {
-  buildLibraryChecks(); buildSocialChecks(); buildThemeSelect(); buildUrlInputs(); updateNotifStatus();
+  buildLibraryChecks(); buildSocialChecks(); buildThemeSelect(); buildUrlInputs();
 }
 
 function buildLibraryChecks() {
@@ -1016,14 +992,6 @@ function buildUrlInputs() {
 }
 
 function resetUrls() { state.customUrls = {...SCRIPTURE_URLS}; saveState(); buildUrlInputs(); }
-
-function updateNotifStatus() {
-  const el = document.getElementById("notif-status");
-  if (!("Notification" in window)) { el.textContent = "Not supported on this browser."; return; }
-  if (Notification.permission === "granted") el.textContent = "✓ Notifications enabled.";
-  else if (Notification.permission === "denied") el.textContent = "Blocked — check your browser/OS settings.";
-  else el.textContent = "";
-}
 
 // ─── Dashboard ────────────────────────────────────────────────────────────────
 function buildDashboard() {

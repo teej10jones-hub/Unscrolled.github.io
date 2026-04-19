@@ -263,6 +263,17 @@
 
     #social-label { font-size: 0.78rem; color: var(--text-muted); text-align: center; opacity: 0.75; }
 
+    #share-quote-btn {
+      background: none; border: none; cursor: pointer;
+      color: var(--text-muted); opacity: 0.5;
+      padding: 4px 8px; font-size: 0.78rem;
+      font-family: 'Crimson Pro', serif;
+      letter-spacing: 0.04em;
+      -webkit-tap-highlight-color: transparent;
+      transition: opacity 0.2s;
+    }
+    #share-quote-btn:active { opacity: 1; }
+
     /* Icon buttons bottom corners */
     .corner-btn {
       position: absolute; bottom: 18px;
@@ -446,6 +457,7 @@
     <div id="bottom-controls">
       <a id="open-scripture-btn" href="#" class="btn" style="display:none;" onclick="handleScriptureOpen(event)">📖 Open Source</a>
       <button id="new-quote-btn" onclick="handleNewQuote()">↻ New Quote</button>
+      <button id="share-quote-btn" onclick="shareQuote()" aria-label="Share quote">↗ Share quote</button>
       <hr class="divider" />
       <div id="social-label">Or continue to social media:</div>
       <div id="social-row"></div>
@@ -502,6 +514,14 @@
         <h2>Custom Scripture URLs</h2>
         <div id="url-inputs"></div>
         <button class="btn btn-outline btn-sm" onclick="resetUrls()" style="margin-top:4px;">Reset to Default</button>
+      </div>
+
+      <div class="settings-section">
+        <h2>Share Unscrolled</h2>
+        <p style="font-size:0.95rem;color:var(--text-muted);line-height:1.5;margin-bottom:12px;">
+          Know someone who could use a moment of inspiration?
+        </p>
+        <button class="btn btn-outline btn-sm" onclick="shareApp()">↗ Share with a Friend</button>
       </div>
 
     </div>
@@ -828,11 +848,21 @@ function getRandomQuote() {
   return pool.length ? pool[Math.floor(Math.random()*pool.length)] : null;
 }
 
-function handleNewQuote() { logGood(); showNewQuote(); }
-
+function handleNewQuote() { logGood(); showNewQuote(); if (navigator.vibrate) navigator.vibrate(6); }
+function shareQuote() {
+  const text = document.getElementById("quote-text").textContent;
+  const ref  = document.getElementById("quote-ref").textContent;
+  const full = ref ? `"${text}" — ${ref}` : `"${text}"`;
+  if (navigator.share) {
+    navigator.share({ text: full });
+  } else {
+    navigator.clipboard.writeText(full);
+  }
+}
 function handleScriptureOpen(e) {
   e.preventDefault();
   logGood();
+  if (navigator.vibrate) navigator.vibrate(10);
   const lib = state.currentLib;
   if (lib === "The Book of Mormon") {
     // Try deep link first, fall back after timeout
@@ -903,6 +933,7 @@ function renderSocialRow() {
     btn.innerHTML = SOCIAL_ICONS[app] || `<span style="font-size:0.75rem">${app}</span>`;
     btn.addEventListener("click", () => {
       logBad();
+      if (navigator.vibrate) navigator.vibrate(10);
       window.location.href = ALL_SOCIAL_APPS[app].url;
     });
     row.appendChild(btn);
@@ -992,6 +1023,15 @@ function buildUrlInputs() {
 }
 
 function resetUrls() { state.customUrls = {...SCRIPTURE_URLS}; saveState(); buildUrlInputs(); }
+
+function shareApp() {
+  const msg = `I've been using an app called Unscrolled that shows me a scripture or uplifting quote every time I reach for social media. Thought you might like it: ${window.location.href}`;
+  if (navigator.share) {
+    navigator.share({ text: msg });
+  } else {
+    window.location.href = `sms:?&body=${encodeURIComponent(msg)}`;
+  }
+}
 
 // ─── Dashboard ────────────────────────────────────────────────────────────────
 function buildDashboard() {

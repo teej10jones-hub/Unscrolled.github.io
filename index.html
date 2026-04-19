@@ -12,7 +12,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="apple-mobile-web-app-title" content="Unscrolled">
-  <link rel="apple-touch-icon" sizes="1024x1024" href="icon.png">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
 
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -249,6 +249,8 @@
     }
     #new-quote-btn:active { opacity: 0.6; }
 
+    #social-row, #social-label { opacity: 0; transition: opacity 0.8s ease; }
+    #social-row.revealed, #social-label.revealed { opacity: 1; }
     #social-row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; justify-content: center; }
     .social-btn {
       background: none; border: none; padding: 6px; cursor: pointer;
@@ -920,6 +922,8 @@ function renderSocialRow() {
   row.innerHTML = "";
   if (!active.length) { label.style.display="none"; return; }
   label.style.display = "block";
+  label.classList.remove("revealed");
+  row.classList.remove("revealed");
   active.forEach(app => {
     const btn = document.createElement("button");
     btn.className = "social-btn"; btn.title = app;
@@ -931,6 +935,10 @@ function renderSocialRow() {
     });
     row.appendChild(btn);
   });
+  setTimeout(() => {
+    label.classList.add("revealed");
+    row.classList.add("revealed");
+  }, 5000);
 }
 
 // ─── Notifications ────────────────────────────────────────────────────────────
@@ -1056,11 +1064,12 @@ function buildDashboard() {
 
   // Bar chart: last 5 days
   const chart = document.getElementById("bar-chart"); chart.innerHTML = "";
-  const today = new Date();
+  const now = new Date();
+  const localToday = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
   const days = [];
   for (let i = 4; i >= 0; i--) {
-    const d = new Date(today); d.setDate(d.getDate() - i);
-    days.push(d.toISOString().slice(0,10));
+    const d = new Date(now); d.setDate(d.getDate() - i);
+    days.push(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`);
   }
 
   const maxVal = Math.max(1, ...days.map(d => {
@@ -1071,7 +1080,7 @@ function buildDashboard() {
     const s = state.stats[d] || {good:0,bad:0};
     const goodH = Math.round((s.good / maxVal) * 112);
     const badH  = Math.round((s.bad  / maxVal) * 112);
-    const label = d === TODAY ? "Today" : new Date(d+"T12:00:00").toLocaleDateString(undefined,{weekday:"short"});
+    const label = d === localToday ? "Today" : new Date(d+"T12:00:00").toLocaleDateString(undefined,{weekday:"short"});
     const col = document.createElement("div"); col.className = "chart-day";
     col.innerHTML = `
       <div class="chart-bars">

@@ -346,9 +346,6 @@
     }
     .url-group input:focus { border-color: var(--accent); }
 
-    /* Notification permission */
-    #notif-btn-wrap { margin-top: 4px; }
-
     /* ── DASHBOARD PAGE ──────────────────────────────────── */
     #dashboard-page { flex-direction: column; }
     .dash-body { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 20px; }
@@ -939,24 +936,6 @@ function renderSocialRow() {
     label.classList.add("revealed");
     row.classList.add("revealed");
   }, 5000);
-}
-
-// ─── Notifications ────────────────────────────────────────────────────────────
-async function requestNotifPermission() {
-  const statusEl = document.getElementById("notif-status");
-  if (!("Notification" in window)) { statusEl.textContent = "Notifications not supported on this device."; return; }
-  const result = await Notification.requestPermission();
-  statusEl.textContent = result === "granted" ? "✓ Notifications enabled!" : "Notifications blocked. Check your browser settings.";
-}
-
-function scheduleNotifications() {
-  if (!("serviceWorker" in navigator) || Notification.permission !== "granted") return;
-  const quotes = getShortQuotes();
-  navigator.serviceWorker.ready.then(reg => {
-    if (reg.active) {
-      reg.active.postMessage({ type:"SCHEDULE_NOTIFICATIONS", quotes, delays:[5*60*1000, 10*60*1000] });
-    }
-  });
 }
 
 // ─── Settings builders ────────────────────────────────────────────────────────

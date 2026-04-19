@@ -872,7 +872,7 @@ function handleScriptureOpen(e) {
     }, 1500);
   } else {
     const url = state.customUrls[lib] || SCRIPTURE_URLS[lib];
-    window.open(url, "_blank");
+    window.location.href = url;
   }
 }
 
@@ -931,7 +931,7 @@ function renderSocialRow() {
     btn.innerHTML = SOCIAL_ICONS[app] || `<span style="font-size:0.75rem">${app}</span>`;
     btn.addEventListener("click", () => {
       logBad();
-      window.open(ALL_SOCIAL_APPS[app].url, "_blank");
+      window.location.href = ALL_SOCIAL_APPS[app].url;
     });
     row.appendChild(btn);
   });

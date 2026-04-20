@@ -63,9 +63,9 @@
 
     body {
       font-family: 'Crimson Pro', Georgia, serif;
-      background: var(--bg2);
       color: var(--text);
       transition: background 0.4s, color 0.4s;
+      background: var(--border);
     }
 
     #frame {
@@ -76,14 +76,14 @@
       border: 10px solid var(--border);
       display: flex;
       flex-direction: column;
-      padding: env(safe-area-inset-top, 16px) env(safe-area-inset-right, 16px) env(safe-area-inset-bottom, 16px) env(safe-area-inset-left, 16px);
+      padding: env(safe-area-inset-top, 16px) env(safe-area-inset-right, 16px) calc(env(safe-area-inset-bottom, 16px) + 16px) env(safe-area-inset-left, 16px);
       transition: border-color 0.4s, background 0.4s;
       overflow: hidden;
       position: fixed;
       top: 0;
       left: 0;
       right: 0;
-      bottom: 0;
+      bottom: -1px;
       height: auto !important;  /* overrides the JS-set height */
     }
 

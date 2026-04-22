@@ -249,6 +249,8 @@
     }
     #new-quote-btn:active { opacity: 0.6; }
 
+    #social-row, #social-label { opacity: 0; transition: opacity 0.8s ease; }
+    #social-row.revealed, #social-label.revealed { opacity: 1; }
     #social-row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; justify-content: center; }
     .social-btn {
       background: none; border: none; padding: 6px; cursor: pointer;
@@ -503,17 +505,6 @@
         <h2>Custom Scripture URLs</h2>
         <div id="url-inputs"></div>
         <button class="btn btn-outline btn-sm" onclick="resetUrls()" style="margin-top:4px;">Reset to Default</button>
-      </div>
-
-      <div class="settings-section">
-        <h2>Notifications</h2>
-        <p style="font-size:0.95rem;color:var(--text-muted);line-height:1.5;margin-bottom:12px;">
-          After you continue to social media, Unscrolled can nudge you back after 5 and 10 minutes. Requires adding to Home Screen (iOS 16.4+).
-        </p>
-        <div id="notif-btn-wrap">
-          <button class="btn btn-outline btn-sm" onclick="requestNotifPermission()">Enable Notifications</button>
-        </div>
-        <p id="notif-status" style="font-size:0.85rem;color:var(--text-muted);margin-top:8px;"></p>
       </div>
 
     </div>
@@ -1546,6 +1537,8 @@ function renderSocialRow() {
   row.innerHTML = "";
   if (!active.length) { label.style.display="none"; return; }
   label.style.display = "block";
+  label.classList.remove("revealed");
+  row.classList.remove("revealed");
   active.forEach(app => {
     const btn = document.createElement("button");
     btn.className = "social-btn"; btn.title = app;
@@ -1557,6 +1550,10 @@ function renderSocialRow() {
     });
     row.appendChild(btn);
   });
+  setTimeout(() => {
+    label.classList.add("revealed");
+    row.classList.add("revealed");
+  }, 5000);
 }
 
 // ─── Notifications ────────────────────────────────────────────────────────────
@@ -1724,7 +1721,9 @@ loadState();
 applyTheme(state.theme);
 applySetupState();
 logOpen();
-loadQuotes(); // loads quotes.yaml then calls showNewQuote() and renderSocialRow()
+loadQuotes();
+renderSocialRow();
+showNewQuote();
 
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/service-worker.js');

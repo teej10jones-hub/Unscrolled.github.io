@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -399,82 +398,76 @@
     @keyframes fadeIn   { from { opacity:0; } to { opacity:1; } }
     .quote-transition { animation: fadeIn 0.45s ease both; }
   </style>
-
 </head>
 <body>
 <div id="frame">
 
   <!-- ══ MAIN PAGE ══════════════════════════════════════════ -->
-
   <div id="main-page" class="page active">
     <div id="app-title">Unscrolled</div>
 
-
-<div id="quote-card">
-  <div id="quote-text" class="quote-transition"></div>
-  <div id="quote-ref"></div>
-  <div id="quote-source-label"></div>
-</div>
-
-<div id="setup-prompt">
-  <div class="setup-card">
-    <div id="step1-done-badge" class="step-done-badge">
-      <span class="check-circle">✓</span>
-      <span>Added to home screen — almost there!</span>
+    <div id="quote-card">
+      <div id="quote-text" class="quote-transition"></div>
+      <div id="quote-ref"></div>
+      <div id="quote-source-label"></div>
     </div>
 
-    <!-- STEP 1 -->
-    <div id="step1-block" class="setup-step-block">
-      <div class="setup-step-label"><span class="step-number">1</span>Add Unscrolled to your Home Screen</div>
-      <p class="setup-step-desc">Open this page in Safari, then:</p>
-      <ul class="setup-substeps">
-        <li>Tap the <strong>Share</strong> button (box with arrow) at the bottom of Safari</li>
-        <li>Scroll down and tap <strong>"Add to Home Screen"</strong></li>
-        <li>Tap <strong>Add</strong> in the top right</li>
-        <li>Move the icon to wherever you want it — ideally where your social media apps used to live!</li>
-      </ul>
-      <button class="btn" id="step1-done-btn" onclick="collapseStep1()">✓ Done — I added it!</button>
+    <div id="setup-prompt">
+      <div class="setup-card">
+        <div id="step1-done-badge" class="step-done-badge">
+          <span class="check-circle">✓</span>
+          <span>Added to home screen — almost there!</span>
+        </div>
+
+        <!-- STEP 1 -->
+        <div id="step1-block" class="setup-step-block">
+          <div class="setup-step-label"><span class="step-number">1</span>Add Unscrolled to your Home Screen</div>
+          <p class="setup-step-desc">Open this page in Safari, then:</p>
+          <ul class="setup-substeps">
+            <li>Tap the <strong>Share</strong> button (box with arrow) at the bottom of Safari</li>
+            <li>Scroll down and tap <strong>"Add to Home Screen"</strong></li>
+            <li>Tap <strong>Add</strong> in the top right</li>
+            <li>Move the icon to wherever you want it — ideally where your social media apps used to live!</li>
+          </ul>
+          <button class="btn" id="step1-done-btn" onclick="collapseStep1()">✓ Done — I added it!</button>
+        </div>
+
+        <hr class="step-divider" />
+
+        <!-- STEP 2 -->
+        <div id="step2-block" class="setup-step-block dimmed">
+          <div class="setup-step-label"><span class="step-number">2</span>Choose your quote libraries</div>
+          <p class="setup-step-desc">Select which texts you'd like quotes from — your choice will be remembered.</p>
+          <button class="btn" onclick="showSettings()">⚙️ Open Settings</button>
+        </div>
+      </div>
+      <button id="reset-setup-link" onclick="resetSetup()">← Haven't added to home screen yet?</button>
     </div>
 
-    <hr class="step-divider" />
-
-    <!-- STEP 2 -->
-    <div id="step2-block" class="setup-step-block dimmed">
-      <div class="setup-step-label"><span class="step-number">2</span>Choose your quote libraries</div>
-      <p class="setup-step-desc">Select which texts you'd like quotes from — your choice will be remembered.</p>
-      <button class="btn" onclick="showSettings()">⚙️ Open Settings</button>
+    <div id="bottom-controls">
+      <a id="open-scripture-btn" href="#" class="btn" style="display:none;" onclick="handleScriptureOpen(event)">📖 Open Source</a>
+      <button id="new-quote-btn" onclick="handleNewQuote()">↻ New Quote</button>
+      <hr class="divider" />
+      <div id="social-label">Or continue to social media:</div>
+      <div id="social-row"></div>
+      <div style="font-size:0.75rem;color:var(--text-muted);opacity:0.65;text-align:center;">Go to settings to edit library selection</div>
     </div>
-  </div>
-  <button id="reset-setup-link" onclick="resetSetup()">← Haven't added to home screen yet?</button>
-</div>
 
-<div id="bottom-controls">
-  <a id="open-scripture-btn" href="#" class="btn" style="display:none;" onclick="handleScriptureOpen(event)">📖 Open Source</a>
-  <button id="new-quote-btn" onclick="handleNewQuote()">↻ New Quote</button>
-  <hr class="divider" />
-  <div id="social-label">Or continue to social media:</div>
-  <div id="social-row"></div>
-  <div style="font-size:0.75rem;color:var(--text-muted);opacity:0.65;text-align:center;">Go to settings to edit library selection</div>
-</div>
-
-<button class="corner-btn" id="dashboard-btn" onclick="showDashboard()" aria-label="Dashboard">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
-    <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
-  </svg>
-</button>
-<button class="corner-btn" id="settings-btn" onclick="showSettings()" aria-label="Settings">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <circle cx="12" cy="12" r="3"/>
-    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-  </svg>
-</button>
-
-
+    <button class="corner-btn" id="dashboard-btn" onclick="showDashboard()" aria-label="Dashboard">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+        <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+      </svg>
+    </button>
+    <button class="corner-btn" id="settings-btn" onclick="showSettings()" aria-label="Settings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+      </svg>
+    </button>
   </div>
 
   <!-- ══ SETTINGS PAGE ══════════════════════════════════════ -->
-
   <div id="settings-page" class="page">
     <div class="page-header">
       <button class="back-btn" onclick="showMain()">
@@ -484,53 +477,49 @@
     </div>
     <div class="settings-body">
 
+      <div class="settings-section">
+        <h2>Quote Libraries</h2>
+        <div id="library-checks"></div>
+      </div>
 
-  <div class="settings-section">
-    <h2>Quote Libraries</h2>
-    <div id="library-checks"></div>
-  </div>
+      <div class="settings-section">
+        <h2>Social Media Apps</h2>
+        <div id="social-checks-primary"></div>
+        <button class="expand-toggle" id="more-apps-toggle" onclick="toggleMoreApps()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          More apps
+        </button>
+        <div class="expandable" id="social-checks-more"></div>
+      </div>
 
-  <div class="settings-section">
-    <h2>Social Media Apps</h2>
-    <div id="social-checks-primary"></div>
-    <button class="expand-toggle" id="more-apps-toggle" onclick="toggleMoreApps()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-      More apps
-    </button>
-    <div class="expandable" id="social-checks-more"></div>
-  </div>
+      <div class="settings-section">
+        <h2>Theme</h2>
+        <div class="theme-select-wrap">
+          <select id="theme-select" onchange="handleThemeChange(this.value)"></select>
+        </div>
+      </div>
 
-  <div class="settings-section">
-    <h2>Theme</h2>
-    <div class="theme-select-wrap">
-      <select id="theme-select" onchange="handleThemeChange(this.value)"></select>
+      <div class="settings-section">
+        <h2>Custom Scripture URLs</h2>
+        <div id="url-inputs"></div>
+        <button class="btn btn-outline btn-sm" onclick="resetUrls()" style="margin-top:4px;">Reset to Default</button>
+      </div>
+
+      <div class="settings-section">
+        <h2>Notifications</h2>
+        <p style="font-size:0.95rem;color:var(--text-muted);line-height:1.5;margin-bottom:12px;">
+          After you continue to social media, Unscrolled can nudge you back after 5 and 10 minutes. Requires adding to Home Screen (iOS 16.4+).
+        </p>
+        <div id="notif-btn-wrap">
+          <button class="btn btn-outline btn-sm" onclick="requestNotifPermission()">Enable Notifications</button>
+        </div>
+        <p id="notif-status" style="font-size:0.85rem;color:var(--text-muted);margin-top:8px;"></p>
+      </div>
+
     </div>
-  </div>
-
-  <div class="settings-section">
-    <h2>Custom Scripture URLs</h2>
-    <div id="url-inputs"></div>
-    <button class="btn btn-outline btn-sm" onclick="resetUrls()" style="margin-top:4px;">Reset to Default</button>
-  </div>
-
-  <div class="settings-section">
-    <h2>Notifications</h2>
-    <p style="font-size:0.95rem;color:var(--text-muted);line-height:1.5;margin-bottom:12px;">
-      After you continue to social media, Unscrolled can nudge you back after 5 and 10 minutes. Requires adding to Home Screen (iOS 16.4+).
-    </p>
-    <div id="notif-btn-wrap">
-      <button class="btn btn-outline btn-sm" onclick="requestNotifPermission()">Enable Notifications</button>
-    </div>
-    <p id="notif-status" style="font-size:0.85rem;color:var(--text-muted);margin-top:8px;"></p>
-  </div>
-
-</div>
-
-
   </div>
 
   <!-- ══ DASHBOARD PAGE ════════════════════════════════════ -->
-
   <div id="dashboard-page" class="page">
     <div class="page-header">
       <button class="back-btn" onclick="showMain()">
@@ -540,70 +529,70 @@
     </div>
     <div class="dash-body">
 
-```
-  <div class="stat-row">
-    <div class="stat-card">
-      <div class="stat-num" id="stat-opens">0</div>
-      <div class="stat-label">Times Opened Today</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-num" id="stat-opens-alltime">0</div>
-      <div class="stat-label">Total Opens All Time</div>
-    </div>
-  </div>
+      <div class="stat-row">
+        <div class="stat-card">
+          <div class="stat-num" id="stat-opens">0</div>
+          <div class="stat-label">Times Opened Today</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="stat-opens-alltime">0</div>
+          <div class="stat-label">Total Opens All Time</div>
+        </div>
+      </div>
 
-  <div class="stat-row">
-    <div class="stat-card">
-      <div class="stat-num" id="stat-good">0</div>
-      <div class="stat-label">Mindful actions today<br><span style="font-size:0.75rem;opacity:0.7">(new quotes + scripture)</span></div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-num" id="stat-bad">0</div>
-      <div class="stat-label">Social media<br>continues today</div>
-    </div>
-  </div>
+      <div class="stat-row">
+        <div class="stat-card">
+          <div class="stat-num" id="stat-good">0</div>
+          <div class="stat-label">Mindful actions today<br><span style="font-size:0.75rem;opacity:0.7">(new quotes + scripture)</span></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="stat-bad">0</div>
+          <div class="stat-label">Social media<br>continues today</div>
+        </div>
+      </div>
 
-  <div>
-    <div class="dash-section-title" style="margin-bottom:12px;">Last 5 Days</div>
-    <div class="chart-legend" style="margin-bottom:10px;">
-      <span><span class="legend-dot" style="background:var(--bar-good)"></span>Mindful</span>
-      <span><span class="legend-dot" style="background:var(--bar-bad)"></span>Social continues</span>
+      <div>
+        <div class="dash-section-title" style="margin-bottom:12px;">Last 5 Days</div>
+        <div class="chart-legend" style="margin-bottom:10px;">
+          <span><span class="legend-dot" style="background:var(--bar-good)"></span>Mindful</span>
+          <span><span class="legend-dot" style="background:var(--bar-bad)"></span>Social continues</span>
+        </div>
+        <div class="chart-wrap" id="bar-chart"></div>
+      </div>
+
+      <div class="ratio-wrap">
+        <div class="ratio-label">All-time mindfulness ratio</div>
+        <div class="ratio-bar-bg"><div class="ratio-bar-fill" id="ratio-fill" style="width:0%"></div></div>
+        <div class="ratio-text" id="ratio-text">—</div>
+      </div>
+
+      <div class="stat-row">
+        <div class="stat-card">
+          <div class="stat-num" id="stat-good-alltime">0</div>
+          <div class="stat-label">Mindful actions all time</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="stat-bad-alltime">0</div>
+          <div class="stat-label">Social continues all time</div>
+        </div>
+      </div>
+
     </div>
-    <div class="chart-wrap" id="bar-chart"></div>
-  </div>
-
-  <div class="ratio-wrap">
-    <div class="ratio-label">All-time mindfulness ratio</div>
-    <div class="ratio-bar-bg"><div class="ratio-bar-fill" id="ratio-fill" style="width:0%"></div></div>
-    <div class="ratio-text" id="ratio-text">—</div>
-  </div>
-
-  <div class="stat-row">
-    <div class="stat-card">
-      <div class="stat-num" id="stat-good-alltime">0</div>
-      <div class="stat-label">Mindful actions all time</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-num" id="stat-bad-alltime">0</div>
-      <div class="stat-label">Social continues all time</div>
-    </div>
-  </div>
-
-</div>
-```
-
   </div>
 
 </div><!-- /frame -->
 
 <script>
 
+// ─── Quote data (loaded from quotes.yaml) ────────────────────────────────────
+let QUOTE_LIBRARY = {};
+
 // ═══════════════════════════════════════════════════════════════════
 // QUOTES — to add a quote, find the library section below and add:
 //
-//   Scripture:           Affirmation:
-//   - text: "Quote."     - "Affirmation."
-//     reference: "Ref"
+//   Scripture:              Affirmation:
+//   - text: "Quote."        - "Affirmation."
+//     reference: "Book 1:1"
 //
 // Keep indentation consistent with surrounding entries.
 // ═══════════════════════════════════════════════════════════════════
@@ -1284,8 +1273,6 @@ The Book of Mormon:
 
 `;
 
-let QUOTE_LIBRARY = {};
-
 function loadQuotes() {
   QUOTE_LIBRARY = parseQuoteYaml(QUOTES_YAML);
 }
@@ -1295,51 +1282,37 @@ function parseQuoteYaml(text) {
   let currentLib = null;
   const lines = text.split('\n');
   let i = 0;
-
   while (i < lines.length) {
     const line = lines[i];
-
     if (line.startsWith('#') || line.trim() === '') { i++; continue; }
-
-    // Top-level library key
     if (/^[A-Za-z]/.test(line) && line.trim().endsWith(':')) {
       currentLib = line.trim().slice(0, -1);
       result[currentLib] = [];
       i++; continue;
     }
-
-    // List item
     if (currentLib && /^  - /.test(line)) {
       const rest = line.slice(4);
-
-      // Plain string affirmation
       if (rest.startsWith('"')) {
-        const val = rest.slice(1, rest.lastIndexOf('"'));
-        result[currentLib].push(val);
+        result[currentLib].push(rest.slice(1, rest.lastIndexOf('"')));
         i++; continue;
       }
-
-      // Object with text/reference
       if (rest.startsWith('text:')) {
-        let textVal = '';
-        let refVal = '';
-        const textMatch = rest.match(/^text:\s*"(.*)"/);
-        if (textMatch) textVal = textMatch[1];
+        let textVal = '', refVal = '';
+        const m = rest.match(/^text:\s*"(.*)"/);
+        if (m) textVal = m[1];
         i++;
         if (i < lines.length && /^    reference:/.test(lines[i])) {
-          const refMatch = lines[i].match(/reference:\s*"(.*)"/);
-          if (refMatch) refVal = refMatch[1];
+          const r = lines[i].match(/reference:\s*"(.*)"/);
+          if (r) refVal = r[1];
           i++;
         }
         if (textVal) result[currentLib].push({ text: textVal, reference: refVal });
         continue;
       }
     }
-
     if (/^  #/.test(line)) { i++; continue; }
     i++;
   }
-
   return result;
 }
 
@@ -1683,10 +1656,6 @@ function buildUrlInputs() {
 
 function resetUrls() { state.customUrls = {...SCRIPTURE_URLS}; saveState(); buildUrlInputs(); }
 
-  if (Notification.permission === "granted") el.textContent = "✓ Notifications enabled.";
-  else if (Notification.permission === "denied") el.textContent = "Blocked — check your browser/OS settings.";
-  else el.textContent = "";
-
 
 // ─── Dashboard ────────────────────────────────────────────────────────────────
 function buildDashboard() {
@@ -1755,14 +1724,11 @@ loadState();
 applyTheme(state.theme);
 applySetupState();
 logOpen();
-loadQuotes();
-renderSocialRow();
-showNewQuote();
+loadQuotes(); // loads quotes.yaml then calls showNewQuote() and renderSocialRow()
 
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/service-worker.js');
 }
 </script>
-
 </body>
 </html>

@@ -1674,10 +1674,11 @@ function buildDashboard() {
   // Bar chart: last 5 days
   const chart = document.getElementById("bar-chart"); chart.innerHTML = "";
   const today = new Date();
+  const localToday = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
   const days = [];
   for (let i = 4; i >= 0; i--) {
     const d = new Date(today); d.setDate(d.getDate() - i);
-    days.push(d.toISOString().slice(0,10));
+    days.push(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`);
   }
 
   const maxVal = Math.max(1, ...days.map(d => {
@@ -1688,7 +1689,7 @@ function buildDashboard() {
     const s = state.stats[d] || {good:0,bad:0};
     const goodH = Math.round((s.good / maxVal) * 112);
     const badH  = Math.round((s.bad  / maxVal) * 112);
-    const label = d === TODAY ? "Today" : new Date(d+"T12:00:00").toLocaleDateString(undefined,{weekday:"short"});
+    const label = d === localToday ? "Today" : new Date(d+"T12:00:00").toLocaleDateString(undefined,{weekday:"short"});
     const col = document.createElement("div"); col.className = "chart-day";
     col.innerHTML = `
       <div class="chart-bars">

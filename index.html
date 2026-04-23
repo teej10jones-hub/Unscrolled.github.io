@@ -254,6 +254,7 @@
     #social-row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; justify-content: center; }
     .social-btn {
       background: none; border: none; padding: 6px; cursor: pointer;
+      color: var(--text);
       opacity: 0.65; transition: opacity 0.2s, transform 0.15s;
       -webkit-tap-highlight-color: transparent;
       display: flex; align-items: center; justify-content: center;
@@ -1546,7 +1547,7 @@ function renderSocialRow() {
     btn.innerHTML = SOCIAL_ICONS[app] || `<span style="font-size:0.75rem">${app}</span>`;
     btn.addEventListener("click", () => {
       logBad();
-      window.open(ALL_SOCIAL_APPS[app].url, "_blank");
+      window.location.href = ALL_SOCIAL_APPS[app].url;
     });
     row.appendChild(btn);
   });

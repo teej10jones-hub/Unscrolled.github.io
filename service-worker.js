@@ -1,4 +1,4 @@
-const CACHE_NAME = 'unscrolled-v1';
+const CACHE_NAME = 'unscrolled-v2';
 
 const ASSETS = [
   '/',

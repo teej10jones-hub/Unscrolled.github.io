@@ -413,6 +413,7 @@
       <div id="quote-text" class="quote-transition"></div>
       <div id="quote-ref"></div>
       <div id="quote-source-label"></div>
+      <button id="share-quote-btn" onclick="shareQuote()" style="margin-top:40px;background:none;border:none;cursor:pointer;color:var(--text-muted);opacity:0.5;font-family:'Crimson Pro',serif;font-size:0.78rem;letter-spacing:0.04em;-webkit-tap-highlight-color:transparent;">share or save quote</button>
     </div>
 
     <div id="setup-prompt">
@@ -440,8 +441,11 @@
         <!-- STEP 2 -->
         <div id="step2-block" class="setup-step-block dimmed">
           <div class="setup-step-label"><span class="step-number">2</span>Choose your quote libraries</div>
-          <p class="setup-step-desc">Select which texts you'd like quotes from — your choice will be remembered.</p>
+          <p class="setup-step-desc">In settings, select which texts you'd like quotes from — your choice will be remembered.</p>
           <button class="btn" onclick="showSettings()">⚙️ Open Settings</button>
+          <p class="setup-step-desc"> </p>
+          <div class="setup-step-label"><span class="step-number">!</span>Optional but extremely effective:</div>
+          <p class="setup-step-desc">On your homescreen, long press each social media app you selected, and choose "edit homescreen" -> "remove from homescreen". Unscrolled will become your only way to access them.</p>
         </div>
       </div>
       <button id="reset-setup-link" onclick="resetSetup()">← Haven't added to home screen yet?</button>
@@ -508,6 +512,11 @@
         <button class="btn btn-outline btn-sm" onclick="resetUrls()" style="margin-top:4px;">Reset to Default</button>
       </div>
 
+      <div class="settings-section">
+        <h2>Share Unscrolled</h2>
+        <p style="font-size:0.95rem;color:var(--text-muted);line-height:1.5;margin-bottom:12px;">Know someone who could use a moment of inspiration?</p>
+        <button class="btn btn-outline btn-sm" onclick="shareApp()">↗ Share with a Friend</button>
+      </div>
     </div>
   </div>
 
@@ -1654,7 +1663,19 @@ function buildUrlInputs() {
 
 function resetUrls() { state.customUrls = {...SCRIPTURE_URLS}; saveState(); buildUrlInputs(); }
 
+function shareQuote() {
+  const text = document.getElementById("quote-text").textContent;
+  const ref  = document.getElementById("quote-ref").textContent;
+  const full = ref ? `"${text}" — ${ref}` : `"${text}"`;
+  if (navigator.share) { navigator.share({ text: full }); }
+  else { navigator.clipboard && navigator.clipboard.writeText(full); }
+}
 
+function shareApp() {
+  const msg = `I've been using an app called Unscrolled that shows me a scripture or uplifting quote every time I reach for social media. Thought you might like it: ${window.location.href}`;
+  if (navigator.share) { navigator.share({ text: msg }); }
+  else { window.location.href = `sms:?&body=${encodeURIComponent(msg)}`; }
+}
 // ─── Dashboard ────────────────────────────────────────────────────────────────
 function buildDashboard() {
   const ts = todayStats();
